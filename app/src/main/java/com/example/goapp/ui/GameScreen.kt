@@ -22,8 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.goapp.R
 import com.example.goapp.data.Piece
-import com.example.goapp.data.ScreenOrientation
-import kotlinx.coroutines.Job
+import com.example.goapp.data.util.ScreenOrientation
 
 
 @Composable

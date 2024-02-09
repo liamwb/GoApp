@@ -10,11 +10,12 @@ import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.lifecycleScope
-import com.example.goapp.data.ScreenOrientation
+import com.example.goapp.data.util.ScreenOrientation
 import com.example.goapp.data.currentgame.CurrentGameDatabase
 import com.example.goapp.data.currentgame.CurrentGameRepository
 import com.example.goapp.data.settings.SettingsDatabase
 import com.example.goapp.data.settings.SettingsRepository
+import com.example.goapp.ui.GoViewModel
 import com.example.goapp.ui.SettingsViewModel
 import com.example.goapp.ui.theme.GoAppTheme
 import kotlinx.coroutines.launch
@@ -52,10 +53,14 @@ class MainActivity : ComponentActivity() {
                              SettingsViewModel.Factory(settingsRepository)
                         }
 
+                        val goViewModel: GoViewModel by viewModels {
+                            GoViewModel.Factory(currentGameRepository)
+                        }
+
                         GoApp(
                             orientation = orientation,
                             settingsViewModel = settingsViewModel,
-                            currentGameRepository = currentGameRepository
+                            goViewModel = goViewModel
                         )
                     }
                 }

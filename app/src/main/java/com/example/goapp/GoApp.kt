@@ -15,10 +15,8 @@ import com.example.goapp.ui.GoViewModel
 import com.example.goapp.ui.SettingsScreen
 import com.example.goapp.ui.StartScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.goapp.data.ScreenOrientation
-import com.example.goapp.data.currentgame.CurrentGameRepository
+import com.example.goapp.data.util.ScreenOrientation
 import com.example.goapp.ui.SettingsViewModel
-import kotlinx.coroutines.launch
 
 enum class GoAppScreen {
     Start,
@@ -32,7 +30,6 @@ fun GoApp(
     orientation: ScreenOrientation,
     goViewModel: GoViewModel = viewModel(),
     settingsViewModel: SettingsViewModel = viewModel(),
-    currentGameRepository: CurrentGameRepository,
     modifier: Modifier = Modifier
 ) {
     val navController: NavHostController = rememberNavController()
@@ -66,7 +63,6 @@ fun GoApp(
                 onUndoButtonPressed = { goViewModel.undoMove() },
                 onNavigateBackButtonPressed = { goViewModel.navigateBackAndSaveCurrentGame(
                     navController = navController,
-                    currentGameRepository = currentGameRepository
                 ) }
 
                 // todo: Implement current game database / continue game button
