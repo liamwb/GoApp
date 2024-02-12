@@ -1,5 +1,7 @@
 package com.example.goapp.ui
 
+import android.content.Context
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -7,6 +9,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.example.goapp.data.settings.SettingEntity
+import com.example.goapp.data.settings.SettingsDatabase
 import com.example.goapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

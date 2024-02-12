@@ -27,8 +27,7 @@ abstract class SettingsDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var Instance: SettingsDatabase? = null
-
-        suspend fun getDatabase(context: Context): SettingsDatabase {
+        fun getDatabase(context: Context): SettingsDatabase {
             // Double-check locking to ensure thread safety
             return Instance ?: synchronized(this) {
                 // Check again inside the synchronized block to prevent multiple database creations

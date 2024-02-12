@@ -1,5 +1,7 @@
 package com.example.goapp.data.settings
 
+import android.content.Context
+
 /**
  * Repository that provides insert, update, delete, and retrieve of [SettingEntity] from a given data source.
  */

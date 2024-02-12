@@ -37,6 +37,8 @@ fun GoApp(
     val boardSize by settingsViewModel.getBoardSize().collectAsState(initial = 9)
 
 
+
+
     NavHost(
         navController = navController,
         startDestination = GoAppScreen.Start.name,

@@ -19,17 +19,16 @@ import com.example.goapp.ui.GoViewModel
 import com.example.goapp.ui.SettingsViewModel
 import com.example.goapp.ui.theme.GoAppTheme
 import kotlinx.coroutines.launch
+import kotlin.concurrent.timer
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            val settingsDatabase = SettingsDatabase.getDatabase(applicationContext)
-            val settingsRepository = SettingsRepository(settingsDatabase.settingDao())
-            val currentGameDatabase = CurrentGameDatabase.getDatabase(applicationContext)
-            val currentGameRepository = CurrentGameRepository(currentGameDatabase.currentGameDao())
+        val settingsRepository = (application as MyApp).settingsRepository
+        val currentGameRepository = (application as MyApp).currentGameRepository
 
+        lifecycleScope.launch {
             setContent {
                 // do we want portrait or landscape
                 val displayMetrics = LocalContext.current.resources.displayMetrics
