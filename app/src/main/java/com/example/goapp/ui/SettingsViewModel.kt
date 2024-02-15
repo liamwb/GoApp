@@ -1,6 +1,7 @@
 package com.example.goapp.ui
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -14,6 +15,7 @@ import com.example.goapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlin.NullPointerException
 
 class SettingsViewModel(
     private val settingsRepository: SettingsRepository,
@@ -21,13 +23,22 @@ class SettingsViewModel(
 ): ViewModel() {
 
     fun getBoardSize(): Flow<Int> {
-        return settingsRepository.getSettingStream("boardsize").map {
-            settingEntity -> settingEntity.settingValue.toInt()
+
+        // cheese the weird null pointer exception that I was getting...
+        // TODO: work out what the fuck is going on
+        return settingsRepository.getSettingStream("boardsize").map { settingEntity ->
+            if (settingEntity == null) {
+                Log.e("error", "settingEntity is null")
+                9
+            }
+            else {
+                settingEntity.settingValue.toInt()
+            }
         }
     }
 
     fun setBoardsize(newBoardsize: Int) {
-        viewModelScope.launch { settingsRepository.updateSetting(SettingEntity("boardsize", newBoardsize.toString())) }
+        viewModelScope.launch { settingsRepository.insertSetting(SettingEntity("boardsize", newBoardsize.toString())) }
     }
 
 

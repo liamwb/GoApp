@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
         val settingsRepository = (application as MyApp).settingsRepository
         val currentGameRepository = (application as MyApp).currentGameRepository
 
+
         lifecycleScope.launch {
             setContent {
                 // do we want portrait or landscape
@@ -39,6 +40,14 @@ class MainActivity : ComponentActivity() {
                     false -> ScreenOrientation.PORTRAIT
                 }
 
+                val settingsViewModel: SettingsViewModel by viewModels {
+                    SettingsViewModel.Factory(settingsRepository)
+                }
+
+                val goViewModel: GoViewModel by viewModels {
+                    GoViewModel.Factory(currentGameRepository)
+                }
+
 
                 GoAppTheme(
                     darkTheme = true
@@ -48,13 +57,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background,
                     ) {
-                        val settingsViewModel: SettingsViewModel by viewModels {
-                             SettingsViewModel.Factory(settingsRepository)
-                        }
 
-                        val goViewModel: GoViewModel by viewModels {
-                            GoViewModel.Factory(currentGameRepository)
-                        }
 
                         GoApp(
                             orientation = orientation,
