@@ -130,7 +130,6 @@ class GoViewModel(
      * Navigate back and save current game.
      *
      * @param navController Nav controller
-     * @param currentGameRepository Current game repository
      */
     fun navigateBackAndSaveCurrentGame(
         navController: NavHostController,
