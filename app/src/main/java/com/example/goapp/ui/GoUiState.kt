@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GoUiState (
-    val boardsize: Int = 9,
-    val gameState: GameState = GameState(boardSize = boardsize), // todo construct board according to size settings
+    val boardSize: Int = 9,
+    val gameState: GameState = GameState(boardSize = boardSize), // todo construct board according to size settings
     @Serializable(with = ArrayDequeSerializer::class)
     val gameStateStack: ArrayDeque<GameState> = ArrayDeque()
         )

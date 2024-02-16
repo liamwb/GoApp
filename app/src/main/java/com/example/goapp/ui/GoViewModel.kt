@@ -7,19 +7,16 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import com.example.goapp.data.GameState
 import com.example.goapp.data.IllegalMove
 import com.example.goapp.data.Piece
 import com.example.goapp.data.currentgame.CurrentGameRepository
-import com.example.goapp.data.settings.SettingsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 
 class GoViewModel(
     private val currentGameRepository: CurrentGameRepository,
@@ -33,8 +30,32 @@ class GoViewModel(
     ) {
         _uiState.update {
             GoUiState(
-                boardsize = boardsize
+                boardSize = boardsize
             )
+        }
+    }
+
+    fun makeContinueGame() {
+        viewModelScope.launch{
+            val gameStateStack = currentGameRepository.getGameStateStack()
+
+
+            // check if the gameStateStack is empty
+            if (gameStateStack.isEmpty()) {
+                makeNewGame(uiState.value.boardSize)
+            }
+            // if the gameStateStack is not empty, then we can proceed
+            else {
+                val boardSize = gameStateStack.last().boardSize
+                val goUiState = GoUiState(
+                    boardSize = boardSize,
+                    gameState = gameStateStack.last(),
+                    gameStateStack = gameStateStack
+                )
+                _uiState.update {
+                    goUiState
+                }
+            }
         }
     }
 
@@ -62,6 +83,10 @@ class GoViewModel(
         _uiState.value.gameStateStack.addLast(oldGameState)
     }
 
+    suspend fun updateCurrentGameDatabase() {
+        currentGameRepository.setGameStateStack(_uiState.value.gameStateStack)
+    }
+
     fun undoMove() {
         val newGameState = _uiState.value.gameStateStack.removeLastOrNull()
         if (newGameState != null) {
@@ -81,7 +106,13 @@ class GoViewModel(
 
         when(illegalMoveObject) {
             IllegalMove.NONE -> {
+                // update uiState
                 inputMove(newGameState)
+
+                // update currentGame database
+                viewModelScope.launch {
+                    currentGameRepository.setGameStateStack(_uiState.value.gameStateStack)
+                }
             }
             IllegalMove.SELFCAPTURE -> {
                 Log.i("IllegalMove", "SELFCAPTURE")
@@ -113,7 +144,7 @@ class GoViewModel(
     private fun saveCurrentGame(
         currentGameRepository: CurrentGameRepository
     ) {
-        viewModelScope.launch { currentGameRepository.setGameState(_uiState.value.gameStateStack) }
+        viewModelScope.launch { currentGameRepository.setGameStateStack(_uiState.value.gameStateStack) }
     }
 
     companion object {

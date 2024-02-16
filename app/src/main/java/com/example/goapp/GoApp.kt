@@ -49,7 +49,10 @@ fun GoApp(
                     goViewModel.makeNewGame(boardsize = boardSize)
                     navController.navigate(route = GoAppScreen.GameScreen.name)
                 },
-                onContinueGameButtonClicked = { /* todo */ },
+                onContinueGameButtonClicked = {
+                    goViewModel.makeContinueGame()
+                    navController.navigate(route = GoAppScreen.GameScreen.name)
+                },
                 onSettingsButtonClicked = { navController.navigate(route = GoAppScreen.Settings.name) },
             )
         }
