@@ -85,7 +85,7 @@ data class GameState (
                 // check self-capture
                 val newPieceLibertyInfo = newGameState.hasLiberties(row, col)
 
-                return if (!newPieceLibertyInfo.first) {
+                return if (newPieceLibertyInfo?.first == false) {
                         Pair(IllegalMove.SELFCAPTURE, this)
                 } else {
                         Pair(IllegalMove.NONE, newGameState)
@@ -148,7 +148,7 @@ data class GameState (
                 )) {  // delete pieces as we go so we don't have to check the same group twice
                         if (adjacentLocation?.piece == nextActivePlayer) {
                                 val libertyInfo = newGameState.hasLiberties(adjacentLocation)
-                                if (!libertyInfo.first) { // if the adjacent piece has no liberties
+                                if (libertyInfo?.first == false) { // if the adjacent piece has no liberties
 
         // first, if there is only one piece to capture then we need to consider Ko.
         // the ko rule can be stated: One may not capture just one stone if that stone was
@@ -268,10 +268,11 @@ data class GameState (
          */
         private fun hasLiberties(startLocation: Location,
                                  visited: MutableSet<Location> = mutableSetOf<Location>()
-        ): Pair<Boolean, MutableSet<Location>> {
+        ): Pair<Boolean, MutableSet<Location>>? {
                 visited.add(startLocation)
                 val friendlyPlayer = startLocation.piece
 
+                // recursion case
                 // for each adjacent vertex
                 for (l in listOf<Location?>(
                         getLocationAbove(startLocation),
@@ -289,8 +290,27 @@ data class GameState (
                                     }
                                     friendlyPlayer -> {
                                             // if there is a friendly piece here then the current
-                                            // piece shares its liberties; continue the search
-                                            return hasLiberties(l, visited)
+                                            // piece shares its liberties; search recursively
+                                            val libertyInfo_l = hasLiberties(l, visited)
+                                            when (libertyInfo_l?.first) {
+                                                    // we found a liberty somewhere down the track
+                                                    true -> {
+                                                            return Pair(
+                                                                    true,
+                                                                    mutableSetOf<Location>()
+                                                            )
+                                                    }
+                                                    // we didn't find a liberty
+                                                    false -> {
+                                                            visited.addAll(libertyInfo_l.second)
+                                                    }
+
+                                                    else -> {
+                                                            Log.e("error",
+                                                                    "hasLiberties returned null")
+                                                    }
+                                            }
+
                                     }
                                     else -> {
                                             // l is an enemy piece or off the board. Do nothing
@@ -300,11 +320,24 @@ data class GameState (
 
                 }
 
-                // if we reach this point then the search has exhausted all adjacent allied pieces,
-                // and failed to find a liberty. Therefore the original piece has no liberties
-                return Pair(false, visited)
+                // base case: each adjacent vertex is either a) in visited, b) occupied by an enemy,
+                // or c) off the board
 
+                if (
+                        getLocationAbove(startLocation)?.piece != friendlyPlayer &&
+                        getLocationBelow(startLocation)?.piece != friendlyPlayer &&
+                        getLocationLeft(startLocation)?.piece != friendlyPlayer &&
+                        getLocationRight(startLocation)?.piece != friendlyPlayer
+                ) {
+                        return Pair(false, visited)
+                }
 
+                // otherwise, we have failed to find a liberty
+
+                return Pair(
+                        false,
+                        visited
+                        )
         }
 
         /**
@@ -323,7 +356,7 @@ data class GameState (
          */
         private fun hasLiberties(row: Int, col: Int,
                                  visited: MutableSet<Location> = mutableSetOf<Location>()
-        ): Pair<Boolean, MutableSet<Location>> {
+        ): Pair<Boolean, MutableSet<Location>>? {
                 val startLocation = board[row][col]
                 return hasLiberties(startLocation, visited)
         }
