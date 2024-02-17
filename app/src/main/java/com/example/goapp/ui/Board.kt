@@ -63,6 +63,7 @@ fun Board(
                     onLongClick = { /* todo */ },
                     onClick = inputMove,
                     activePlayer = activePlayer,
+                    boardSize = boardSize,
                     modifier = Modifier.fillMaxSize()
                 )
             }
@@ -80,12 +81,18 @@ fun BoardSquare(
     onLongClick: () -> Unit,
     onClick: (Int, Int, Piece) -> Unit,
     activePlayer: Piece,
+    boardSize: Int,
     modifier: Modifier = Modifier
 ) {
     var isPreview by remember { mutableStateOf(false) }
     val row = item.coordinate.first
     val col = item.coordinate.second
     val piece = item.piece
+
+    val drawLeft =  col > 0
+    val drawRight = col < boardSize - 1
+    val drawTop = row > 0
+    val drawBottom = row < boardSize - 1
 
 
     Box(modifier = modifier
@@ -99,26 +106,41 @@ fun BoardSquare(
             onLongClick = onLongClick,
             onClick = { onClick(row, col, activePlayer) }
         )
-    )
-
-    {
-
+    ) {
         // Draw the lines
         Canvas(
             modifier = modifier
                 .fillMaxSize()
         ) {
+            val verticalStarty = when ( drawTop ) {
+                true -> 0f
+                false -> this.size.height / 2
+            }
+            val verticalEndy = when( drawBottom ) {
+                true -> this.size.height
+                false -> this.size.height / 2
+            }
+
+            val horizontalStartx = when( drawLeft ) {
+                true -> 0f
+                false -> this.size.width / 2
+            }
+            val horizontalEndx = when ( drawRight ) {
+                true -> this.size.width
+                false -> this.size.width / 2
+            }
+
             drawLine(
                 color = lineColor,
-                Offset((this.size.width - lineStrokeWidth) / 2, 0f),
-                Offset((this.size.width - lineStrokeWidth) / 2, this.size.height),
+                Offset((this.size.width - lineStrokeWidth) / 2, verticalStarty),
+                Offset((this.size.width - lineStrokeWidth) / 2, verticalEndy),
                 strokeWidth = lineStrokeWidth
             )
 
             drawLine(
                 color = lineColor,
-                Offset(0f, this.size.height / 2),
-                Offset(this.size.width , this.size.height / 2),
+                Offset(horizontalStartx, this.size.height / 2),
+                Offset(horizontalEndx, this.size.height / 2),
                 strokeWidth = lineStrokeWidth
             )
         }
