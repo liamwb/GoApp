@@ -68,7 +68,8 @@ fun GoApp(
                 onUndoButtonPressed = { goViewModel.undoMove() },
                 onNavigateBackButtonPressed = { goViewModel.navigateBackAndSaveCurrentGame(
                     navController = navController,
-                ) }
+                ) },
+                onCalculateScorePressed = { goViewModel.calculateAreaScore().toString() }
 
                 // todo: Implement current game database / continue game button
             )

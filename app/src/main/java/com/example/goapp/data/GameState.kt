@@ -197,10 +197,10 @@ data class GameState (
                 val row = location.coordinate.first
                 val col = location.coordinate.second
 
-                if (row <= 0) {
-                        return null
+                return if (row <= 0) {
+                        null
                 } else {
-                        return board[row - 1][col]
+                        board[row - 1][col]
                 }
         }
 
@@ -214,10 +214,10 @@ data class GameState (
                 val row = location.coordinate.first
                 val col = location.coordinate.second
 
-                if (row >= boardSize - 1) {
-                        return null
+                return if (row >= boardSize - 1) {
+                        null
                 } else {
-                        return board[row + 1][col]
+                        board[row + 1][col]
                 }
         }
 
@@ -231,10 +231,10 @@ data class GameState (
                 val row = location.coordinate.first
                 val col = location.coordinate.second
 
-                if (col <= 0) {
-                        return null
+                return if (col <= 0) {
+                        null
                 } else {
-                        return board[row][col - 1]
+                        board[row][col - 1]
                 }
         }
 
@@ -248,11 +248,20 @@ data class GameState (
                 val row = location.coordinate.first
                 val col = location.coordinate.second
 
-                if (col >= boardSize - 1) {
-                        return null
+                return if (col >= boardSize - 1) {
+                        null
                 } else {
-                        return board[row][col + 1]
+                        board[row][col + 1]
                 }
+        }
+
+        private fun getNeighbours(location: Location): List<Location?> {
+                return listOf(
+                        getLocationAbove(location),
+                        getLocationBelow(location),
+                        getLocationLeft(location),
+                        getLocationRight(location)
+                )
         }
 
         /**
@@ -320,17 +329,17 @@ data class GameState (
 
                 }
 
-                // base case: each adjacent vertex is either a) in visited, b) occupied by an enemy,
+                // base case: each connected vertex is either a) in visited, b) occupied by an enemy,
                 // or c) off the board
 
-                if (
-                        getLocationAbove(startLocation)?.piece != friendlyPlayer &&
-                        getLocationBelow(startLocation)?.piece != friendlyPlayer &&
-                        getLocationLeft(startLocation)?.piece != friendlyPlayer &&
-                        getLocationRight(startLocation)?.piece != friendlyPlayer
-                ) {
-                        return Pair(false, visited)
-                }
+//                if (
+//                        getLocationAbove(startLocation)?.piece != friendlyPlayer &&
+//                        getLocationBelow(startLocation)?.piece != friendlyPlayer &&
+//                        getLocationLeft(startLocation)?.piece != friendlyPlayer &&
+//                        getLocationRight(startLocation)?.piece != friendlyPlayer
+//                ) {
+//                        return Pair(false, visited)
+//                }
 
                 // otherwise, we have failed to find a liberty
 
@@ -369,8 +378,132 @@ data class GameState (
                 }
         }
 
+        /**
+         * Calculate area score. A player's area score is the sum of
+         *      - the number of empty board locations completely surrounded by their pieces
+         *      - the number of pieces they have on the board
+         *
+         * @return
+         */
+        fun calculateAreaScore(): Pair<Int, Int> {
+                var playerOneScore = 0
+                var playerTwoScore = 0
+                val visitedEmptySquares = mutableSetOf<Location>()
 
+                for (row in board.indices) { for (col in board.indices) {
+                       // firstly, if there is a piece here then add one to that player's score
+                       val currentLocation = board[row][col]
+
+                       when (currentLocation.piece) {
+                               Piece.PLAYER1 -> playerOneScore++
+                               Piece.PLAYER2 -> playerTwoScore++
+                               /***
+                                * if there is an empty location here, then we need to
+                                * check if it is entirely enclosed by pieces of a single
+                                * type, and update the scores accordingly.
+                                */
+                               Piece.EMPTY -> {
+                                       val surroundedEmptyLocationScore =
+                                               calculateSurroundedEmptyLocationScore(
+                                                       AreaScoreMultiComponent(
+                                                               startLocation = currentLocation
+                                                       )
+                                               )
+                                       val seenPiece1 = surroundedEmptyLocationScore.seenPiece1
+                                       val seenPiece2 = surroundedEmptyLocationScore.seenPiece2
+                                       val connectedEmptyLocations = surroundedEmptyLocationScore.visited
+
+                                       // update scores according to which pieces are surrounding
+                                       when {
+                                               seenPiece1 && !seenPiece2 -> playerOneScore++
+                                               seenPiece2 && !seenPiece1 -> playerTwoScore++
+                                               else -> { }
+                                       }
+                                       // update the set of visited squares
+                                       visitedEmptySquares.addAll(connectedEmptyLocations)
+
+                               }
+                       }
+               } }
+               return Pair(playerOneScore, playerTwoScore)
+        }
+
+        /**
+         * Finds each empty board location connected by empty board locations to startLocation, and
+         * returns an [AreaScoreMultiComponent] encoding that set of empty locations, as well as
+         * which player's pieces border the empty region.
+         *
+         * @param areaScoreMultiComponent Area score multi component encoding the start location.
+         * @return [AreaScoreMultiComponent]
+         */
+        private fun calculateSurroundedEmptyLocationScore(
+                areaScoreMultiComponent: AreaScoreMultiComponent
+        ): AreaScoreMultiComponent {
+                val startLocation = areaScoreMultiComponent.startLocation
+                var newSeenPiece1 = areaScoreMultiComponent.seenPiece1
+                var newSeenPiece2 = areaScoreMultiComponent.seenPiece2
+                val visited = areaScoreMultiComponent.visited
+
+                // this function should only be called at empty board locations
+                assert(startLocation.piece == Piece.EMPTY)
+                visited.add(startLocation)
+
+                // recursive case: for each adjacent empty location
+                for (l in getNeighbours(startLocation)) {
+                        // check if we've visited l
+                        if (l !in visited) {
+                                // check if there l is empty
+                                when (l?.piece) {
+                                        // if l is empty then continue to search recursively
+                                        Piece.EMPTY -> {
+                                                val newMultiComponent = AreaScoreMultiComponent(
+                                                        startLocation = l,
+                                                        seenPiece1 = newSeenPiece1,
+                                                        seenPiece2 = newSeenPiece2,
+                                                        visited = visited
+                                                )
+                                                val l_score = calculateSurroundedEmptyLocationScore(
+                                                        newMultiComponent
+                                                )
+                                                // update visited, newSeenPiece1, and newSeenPiece2
+                                                visited.addAll(l_score.visited)
+                                                newSeenPiece1 = l_score.seenPiece1
+                                                newSeenPiece2 = l_score.seenPiece2
+                                        }
+                                        // we don't need to search from occupied locations, but
+                                        // we do need to note which pieces we've seen
+                                        Piece.PLAYER1 -> newSeenPiece1 = true
+                                        Piece.PLAYER2 -> newSeenPiece2 = true
+                                        // if we're off the board, do nothing
+                                        null -> { }
+                                }
+                        }
+                }
+
+                // base case: each connected vertex is either occupied, in visited, or off the board
+                return AreaScoreMultiComponent(
+                        startLocation = startLocation,
+                        seenPiece1 = newSeenPiece1,
+                        seenPiece2 = newSeenPiece2,
+                        visited = visited
+                )
+
+        }
 }
+
+/**
+ * Data class for the recursive function [calculateSurroundedEmptyLocationScore].
+ *
+ * @property startLocation
+ * @property seenPiece1
+ * @property seenPiece2
+ * @property visited
+ * @constructor Create [AreaScoreMultiComponent]
+ */
+data class AreaScoreMultiComponent(val startLocation: Location,
+                                   val seenPiece1: Boolean = false,
+                                   val seenPiece2: Boolean = false,
+                                   val visited: MutableSet<Location> = mutableSetOf<Location>())
 
 object GameStateSerializer {
         fun serialize(gameState: GameState): String {

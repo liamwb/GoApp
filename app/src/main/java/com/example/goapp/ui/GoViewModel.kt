@@ -96,8 +96,6 @@ class GoViewModel(
                 )
             }
         }
-
-
     }
 
     fun checkLegalAndInputMove (row: Int, col: Int, piece: Piece) {
@@ -144,6 +142,11 @@ class GoViewModel(
         currentGameRepository: CurrentGameRepository
     ) {
         viewModelScope.launch { currentGameRepository.setGameStateStack(_uiState.value.gameStateStack) }
+    }
+
+    fun calculateAreaScore() {
+        val areaScore = uiState.value.gameState.calculateAreaScore()
+        Log.d("area", areaScore.toString())
     }
 
     companion object {

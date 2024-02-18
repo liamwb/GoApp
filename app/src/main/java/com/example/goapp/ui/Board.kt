@@ -89,6 +89,7 @@ fun BoardSquare(
     val col = item.coordinate.second
     val piece = item.piece
 
+    // we don't want to draw the stems on the edges of the board
     val drawLeft =  col > 0
     val drawRight = col < boardSize - 1
     val drawTop = row > 0
@@ -112,6 +113,7 @@ fun BoardSquare(
             modifier = modifier
                 .fillMaxSize()
         ) {
+            // calculate where to draw to and from based on position of square on the board
             val verticalStarty = when ( drawTop ) {
                 true -> 0f
                 false -> this.size.height / 2
@@ -120,7 +122,6 @@ fun BoardSquare(
                 true -> this.size.height
                 false -> this.size.height / 2
             }
-
             val horizontalStartx = when( drawLeft ) {
                 true -> 0f
                 false -> this.size.width / 2
@@ -130,6 +131,7 @@ fun BoardSquare(
                 false -> this.size.width / 2
             }
 
+            // draw the lines
             drawLine(
                 color = lineColor,
                 Offset((this.size.width - lineStrokeWidth) / 2, verticalStarty),
@@ -188,7 +190,7 @@ fun Piece(
 @Composable
 fun BoardPreview() {
     val gameState = GameState()
-    Board(gameState, activePlayer = PLAYER1, inputMove = {a, b, c -> Unit})
+    Board(gameState, activePlayer = PLAYER1, inputMove = {a, b, c -> })
 }
 //
 //@Preview
