@@ -179,6 +179,21 @@ data class GameState (
                 return newGameState
         }
 
+        /**
+         * Pass turn. This function:
+         *  - changes the active player
+         *  - does not change the board
+         * @return [GameState]
+         */
+        fun passTurn(): GameState {
+
+                return GameState(
+                        activePlayer = getOppositePiece(activePlayer),
+                        boardSize = boardSize,
+                        board = board
+                )
+        }
+
         private fun addPiece(row: Int, col: Int, piece: Piece) {
                 board[row][col].piece = piece
         }
@@ -489,6 +504,7 @@ data class GameState (
                 )
 
         }
+
 }
 
 /**

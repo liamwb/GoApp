@@ -10,6 +10,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavHostController
 import com.example.goapp.data.GameState
 import com.example.goapp.data.IllegalMove
+import com.example.goapp.data.Location
 import com.example.goapp.data.Piece
 import com.example.goapp.data.currentgame.CurrentGameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,6 +84,21 @@ class GoViewModel(
         _uiState.value.gameStateStack.addLast(oldGameState)
     }
 
+    /**
+     * Pass the turn to the other player. Checks if there have been two passes in a row. If so, the
+     * game is over.
+     */
+    fun passTurn() {
+        if (checkConsecutivePasses()) {
+            Log.d("debug", "Two passes!")
+        }
+
+        val newGameState = _uiState.value.gameState.passTurn()
+        inputMove(newGameState)
+
+
+    }
+
     suspend fun updateCurrentGameDatabase() {
         currentGameRepository.setGameStateStack(_uiState.value.gameStateStack)
     }
@@ -148,6 +164,34 @@ class GoViewModel(
         val areaScore = uiState.value.gameState.calculateAreaScore()
         Log.d("area", areaScore.toString())
     }
+
+    /**
+     * Checks if the last two board states are the same. If so, then there have been two consecutive
+     * passes.
+     *
+     * @return true if the two board states on top of the stack are identical, false otherwise
+     */
+    private fun checkConsecutivePasses(): Boolean {
+        // if there have been less than two moves, then there can't have been two consecutive passes
+        if (uiState.value.gameStateStack.size < 1) {
+            return false
+        }
+
+        val currentBoard = uiState.value.gameState.board
+        val previousBoard = uiState.value.gameStateStack.lastOrNull()?.board
+
+        // check (deeply) if the two boards are the same
+        for (row in currentBoard.indices) {
+            for (col in currentBoard.indices) {
+                if (currentBoard[row][col] != previousBoard!![row][col]) {
+                    return false
+                }
+            }
+        }
+        // if no two board locations are different, then we can return true
+        return true
+    }
+
 
     companion object {
         // the GoViewModel is provided to the viewModel factory. Make sure to use

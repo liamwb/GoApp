@@ -69,7 +69,7 @@ fun GoApp(
                 onNavigateBackButtonPressed = { goViewModel.navigateBackAndSaveCurrentGame(
                     navController = navController,
                 ) },
-                onCalculateScorePressed = { goViewModel.calculateAreaScore().toString() }
+                onPassButtonPressed = { goViewModel.passTurn() }
 
                 // todo: Implement current game database / continue game button
             )

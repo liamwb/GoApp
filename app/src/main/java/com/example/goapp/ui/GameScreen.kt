@@ -33,7 +33,7 @@ fun GameScreen(
     onUndoButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
     onNavigateBackButtonPressed: () -> Unit,
-    onCalculateScorePressed: () -> Unit
+    onPassButtonPressed: () -> Unit
 ) {
     Box(
         modifier = modifier.fillMaxSize(),
@@ -51,7 +51,7 @@ fun GameScreen(
                     name = "Player 1",
                     style = MaterialTheme.typography.bodyMedium,
                     onUndoButtonPressed = onUndoButtonPressed,
-                    onCalculateScorePressed = onCalculateScorePressed
+                    onPassButtonPressed = onPassButtonPressed
                 )
 
                 Board(
@@ -66,7 +66,7 @@ fun GameScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     onUndoButtonPressed = onUndoButtonPressed,
                     modifier = Modifier.rotate(180f),
-                    onCalculateScorePressed = onCalculateScorePressed
+                    onPassButtonPressed = onPassButtonPressed
                 )
 
             }
@@ -81,7 +81,7 @@ fun GameScreen(
                     style = MaterialTheme.typography.bodyMedium,
                     onUndoButtonPressed = onUndoButtonPressed,
                     modifier = Modifier.rotate(180f),
-                    onCalculateScorePressed = onCalculateScorePressed
+                    onPassButtonPressed = onPassButtonPressed
                 )
 
                 Board(
@@ -95,7 +95,7 @@ fun GameScreen(
                     name = "Player 1",
                     style = MaterialTheme.typography.bodyMedium,
                     onUndoButtonPressed = onUndoButtonPressed,
-                    onCalculateScorePressed = onCalculateScorePressed
+                    onPassButtonPressed = onPassButtonPressed
                 )
             }
         }
@@ -118,7 +118,7 @@ fun PlayerComposable(
     name: String,
     style: TextStyle,
     onUndoButtonPressed: () -> Unit,
-    onCalculateScorePressed: () -> Unit,
+    onPassButtonPressed: () -> Unit,
     modifier: Modifier = Modifier) {
 
     Column(
@@ -133,8 +133,8 @@ fun PlayerComposable(
                 "Undo Button")
         }
 
-        IconButton(onClick =  onCalculateScorePressed ) {
-            Icon(painter = painterResource(R.drawable.ic_launcher_foreground),
+        IconButton(onClick =  onPassButtonPressed ) {
+            Icon(painter = painterResource(R.drawable.step_over_24px),
                 "Undo Button")
         }
     }
@@ -149,7 +149,7 @@ fun GameScreenPreview () {
         onUndoButtonPressed = {},
         modifier = Modifier,
         onNavigateBackButtonPressed = { },
-        onCalculateScorePressed = { },
+        onPassButtonPressed = { },
     )
 }
 
