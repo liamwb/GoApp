@@ -1,7 +1,6 @@
 package com.example.goapp.ui
 
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
@@ -10,7 +9,6 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.navigation.NavHostController
 import com.example.goapp.data.GameState
 import com.example.goapp.data.IllegalMove
-import com.example.goapp.data.Location
 import com.example.goapp.data.Piece
 import com.example.goapp.data.currentgame.CurrentGameRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +18,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class GoViewModel(
-    private val currentGameRepository: CurrentGameRepository,
-    savedStateHandle: SavedStateHandle
+    private val currentGameRepository: CurrentGameRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(GoUiState())
     val uiState: StateFlow<GoUiState> = _uiState.asStateFlow()
@@ -207,8 +204,7 @@ class GoViewModel(
                     val savedStateHandle = extras.createSavedStateHandle()
 
                     return GoViewModel(
-                        repository,
-                        savedStateHandle
+                        repository
                     ) as T
                 }
             }

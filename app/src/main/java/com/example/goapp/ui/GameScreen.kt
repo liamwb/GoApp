@@ -1,16 +1,17 @@
 package com.example.goapp.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -32,110 +33,219 @@ fun GameScreen(
     inputMove: (Int, Int, Piece) -> Unit,
     onUndoButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
-    onNavigateBackButtonPressed: () -> Unit,
     onPassButtonPressed: () -> Unit
 ) {
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(color = MaterialTheme.colorScheme.background),
         contentAlignment = Alignment.TopStart
     ) {
         // Use a row or a column depending on whether the screen in landscape or portrait
-        // there is surely a better way to do this
         if (orientation == ScreenOrientation.LANDSCAPE) {
-            Row(
-                modifier = modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.SpaceAround,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                PlayerComposable(
-                    name = "Player 1",
-                    style = MaterialTheme.typography.bodyMedium,
-                    onUndoButtonPressed = onUndoButtonPressed,
-                    onPassButtonPressed = onPassButtonPressed
-                )
-
-                Board(
-                    gameState = uiState.gameState,
-                    activePlayer = uiState.gameState.activePlayer,
-                    inputMove = inputMove,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-
-                PlayerComposable(
-                    name = "Player 2",
-                    style = MaterialTheme.typography.bodyMedium,
-                    onUndoButtonPressed = onUndoButtonPressed,
-                    modifier = Modifier.rotate(180f),
-                    onPassButtonPressed = onPassButtonPressed
-                )
-
-            }
+            LandscapeLayout(
+                uiState = uiState,
+                inputMove = inputMove,
+                onUndoButtonPressed = onUndoButtonPressed,
+                modifier = modifier,
+                onPassButtonPressed = onPassButtonPressed
+            )
         } else {
-            Column(
-                modifier = modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.SpaceAround,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                PlayerComposable(
-                    name = "Player 2",
-                    style = MaterialTheme.typography.bodyMedium,
-                    onUndoButtonPressed = onUndoButtonPressed,
-                    modifier = Modifier.rotate(180f),
-                    onPassButtonPressed = onPassButtonPressed
-                )
-
-                Board(
-                    gameState = uiState.gameState,
-                    activePlayer = uiState.gameState.activePlayer,
-                    inputMove = inputMove,
-                    modifier = Modifier.padding(vertical = 16.dp)
-                )
-
-                PlayerComposable(
-                    name = "Player 1",
-                    style = MaterialTheme.typography.bodyMedium,
-                    onUndoButtonPressed = onUndoButtonPressed,
-                    onPassButtonPressed = onPassButtonPressed
-                )
-            }
-        }
-        // Back Button
-        IconButton(
-            onClick = onNavigateBackButtonPressed,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.ArrowBack,
-                contentDescription = "Back"
+            PortraitLayout(
+                uiState = uiState,
+                inputMove = inputMove,
+                onUndoButtonPressed = onUndoButtonPressed,
+                modifier = modifier,
+                onPassButtonPressed = onPassButtonPressed
             )
         }
     }
 
 }
 
-@Composable
-fun PlayerComposable(
+@Composable fun LandscapeLayout (
+    uiState: GoUiState,
+    inputMove: (Int, Int, Piece) -> Unit,
+    onUndoButtonPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+    onPassButtonPressed: () -> Unit
+) {
+    Row(
+        modifier = modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.SpaceAround,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        PlayerComposableCard(
+            name = "Player 1",
+            style = MaterialTheme.typography.headlineSmall,
+            orientation = ScreenOrientation.LANDSCAPE,
+            onUndoButtonPressed = onUndoButtonPressed,
+            onPassButtonPressed = onPassButtonPressed,
+            modifier = Modifier.weight(1f)
+        )
+
+        Board(
+            gameState = uiState.gameState,
+            activePlayer = uiState.gameState.activePlayer,
+            inputMove = inputMove,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+
+        PlayerComposableCard(
+            name = "Player 2",
+            style = MaterialTheme.typography.headlineSmall,
+            orientation = ScreenOrientation.LANDSCAPE,
+            onUndoButtonPressed = onUndoButtonPressed,
+            modifier = Modifier.rotate(180f).weight(1f),
+            onPassButtonPressed = onPassButtonPressed,
+
+        )
+    }
+}
+
+@Composable fun PortraitLayout (
+    uiState: GoUiState,
+    inputMove: (Int, Int, Piece) -> Unit,
+    onUndoButtonPressed: () -> Unit,
+    modifier: Modifier = Modifier,
+    onPassButtonPressed: () -> Unit
+) {
+    val width =
+
+    Column(
+        modifier = modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.SpaceAround,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        PlayerComposableCard(
+            name = "Player 2",
+            style = MaterialTheme.typography.displaySmall,
+            orientation = ScreenOrientation.PORTRAIT,
+            onUndoButtonPressed = onUndoButtonPressed,
+            modifier = Modifier.rotate(180f),
+            onPassButtonPressed = onPassButtonPressed
+        )
+
+        Board(
+            gameState = uiState.gameState,
+            activePlayer = uiState.gameState.activePlayer,
+            inputMove = inputMove,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
+        PlayerComposableCard(
+            name = "Player 1",
+            style = MaterialTheme.typography.displaySmall,
+            orientation = ScreenOrientation.PORTRAIT,
+            onUndoButtonPressed = onUndoButtonPressed,
+            onPassButtonPressed = onPassButtonPressed
+        )
+    }
+}
+
+@Composable fun PlayerComposableCard(
+    modifier: Modifier = Modifier,
+    name: String,
+    style: TextStyle,
+    orientation: ScreenOrientation,
+    onUndoButtonPressed: () -> Unit,
+    onPassButtonPressed: () -> Unit,
+) {
+    if (orientation == ScreenOrientation.LANDSCAPE) {
+        PlayerComposableCardColumn(
+            modifier = modifier,
+            name = name,
+            style = style,
+            onUndoButtonPressed = onUndoButtonPressed,
+            onPassButtonPressed = onPassButtonPressed
+        )
+    } else {
+        PlayerComposableCardRow(
+            modifier = modifier,
+            name = name,
+            style = style,
+            onUndoButtonPressed = onUndoButtonPressed,
+            onPassButtonPressed = onPassButtonPressed
+        )
+    }
+}
+
+@Composable fun PlayerComposableCardColumn(
+    modifier: Modifier = Modifier,
     name: String,
     style: TextStyle,
     onUndoButtonPressed: () -> Unit,
-    onPassButtonPressed: () -> Unit,
-    modifier: Modifier = Modifier) {
-
+    onPassButtonPressed: () -> Unit, ) {
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
     ) {
-        Text(text = name, style = style)
-        
-        IconButton(onClick =  onUndoButtonPressed ) {
-            Icon(painter = painterResource(R.drawable.undo_48px),
-                "Undo Button")
-        }
+        OutlinedCard(
+            modifier = Modifier.padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background
+            )
+        ) {
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = name, style = style, modifier = Modifier.padding(8.dp))
 
-        IconButton(onClick =  onPassButtonPressed ) {
-            Icon(painter = painterResource(R.drawable.step_over_24px),
-                "Undo Button")
+                FilledTonalButton(onClick =  onUndoButtonPressed, modifier = Modifier.padding(8.dp) ) {
+                    Icon(painter = painterResource(R.drawable.undo_48px),
+                        "Undo Button")
+                }
+
+                FilledTonalButton(onClick =  onPassButtonPressed, modifier = Modifier.padding(8.dp) ) {
+                    Icon(painter = painterResource(R.drawable.step_over_24px),
+                        "Undo Button")
+                }
+            }
+        }
+    }
+}
+
+@Composable fun PlayerComposableCardRow(
+    modifier: Modifier = Modifier,
+    name: String,
+    style: TextStyle,
+    onUndoButtonPressed: () -> Unit,
+    onPassButtonPressed: () -> Unit, ) {
+    Column (
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        OutlinedCard(
+            modifier = Modifier.padding(16.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.background
+            )
+        ) {
+            Column (
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(text = name, style = style, modifier = Modifier.padding(8.dp))
+
+                Row{
+                    FilledTonalButton(onClick =  onUndoButtonPressed, modifier = Modifier.padding(8.dp) ) {
+                        Icon(painter = painterResource(R.drawable.undo_48px),
+                            "Undo Button")
+                    }
+
+                    FilledTonalButton(onClick =  onPassButtonPressed, modifier = Modifier.padding(8.dp) ) {
+                        Icon(painter = painterResource(R.drawable.step_over_24px),
+                            "Undo Button")
+                    }
+                }
+
+            }
+
         }
     }
 }
@@ -148,9 +258,7 @@ fun GameScreenPreview () {
         uiState = GoUiState(), { a, b, c ->  },
         onUndoButtonPressed = {},
         modifier = Modifier,
-        onNavigateBackButtonPressed = { },
-        onPassButtonPressed = { },
-    )
+    ) { }
 }
 
 

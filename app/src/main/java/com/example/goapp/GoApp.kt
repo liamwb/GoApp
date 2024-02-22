@@ -66,10 +66,7 @@ fun GoApp(
                         row, col, piece -> goViewModel.checkLegalAndInputMove(row, col, piece)
                 },
                 onUndoButtonPressed = { goViewModel.undoMove() },
-                onNavigateBackButtonPressed = { goViewModel.navigateBackAndSaveCurrentGame(
-                    navController = navController,
-                ) },
-                onPassButtonPressed = { goViewModel.passTurn() }
+                onPassButtonPressed = { goViewModel.passTurn() },
 
                 // todo: Implement current game database / continue game button
             )

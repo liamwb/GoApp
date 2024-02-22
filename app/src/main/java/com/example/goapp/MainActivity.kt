@@ -9,6 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import com.example.goapp.data.util.ScreenOrientation
 import com.example.goapp.data.currentgame.CurrentGameDatabase
@@ -28,6 +29,8 @@ class MainActivity : ComponentActivity() {
         val settingsRepository = (application as MyApp).settingsRepository
         val currentGameRepository = (application as MyApp).currentGameRepository
 
+        // draw the content "edge-to-edge" -- no navigation bar or status bar
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         lifecycleScope.launch {
             setContent {

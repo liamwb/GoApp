@@ -48,52 +48,49 @@ fun SettingsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            Row {
-                Text(text = "Boardsize: ", style = MaterialTheme.typography.bodyLarge)
+            ExposedDropdownMenuBox(
+                expanded = boardsizeMenuIsExpanded,
+                onExpandedChange = { boardsizeMenuIsExpanded = it }
+            ) {
+                TextField(
+                    value = boardSize.toString(),
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Boardsize") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = boardsizeMenuIsExpanded)
+                    },
+                    modifier = Modifier.menuAnchor()
+                )
 
-                ExposedDropdownMenuBox(
+                ExposedDropdownMenu(
                     expanded = boardsizeMenuIsExpanded,
-                    onExpandedChange = { boardsizeMenuIsExpanded = it }
-                ) {
-                    TextField(
-                        value = boardSize.toString(),
-                        onValueChange = {},
-                        readOnly = true,
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = boardsizeMenuIsExpanded)
-                        },
-                        modifier = Modifier.menuAnchor()
+                    onDismissRequest = { boardsizeMenuIsExpanded = false })
+                {
+
+                    DropdownMenuItem(
+                        text = { Text("9x9") },
+                        onClick = {
+                            settingsViewModel.setBoardsize(9)
+                            boardsizeMenuIsExpanded = false
+                        }
                     )
 
-                    ExposedDropdownMenu(
-                        expanded = boardsizeMenuIsExpanded,
-                        onDismissRequest = { boardsizeMenuIsExpanded = false })
-                    {
+                    DropdownMenuItem(
+                        text = { Text("13x13") },
+                        onClick = {
+                            settingsViewModel.setBoardsize(13)
+                            boardsizeMenuIsExpanded = false
+                        }
+                    )
 
-                        DropdownMenuItem(
-                            text = { Text("9x9") },
-                            onClick = {
-                                settingsViewModel.setBoardsize(9)
-                                boardsizeMenuIsExpanded = false
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = { Text("13x13") },
-                            onClick = {
-                                settingsViewModel.setBoardsize(13)
-                                boardsizeMenuIsExpanded = false
-                            }
-                        )
-
-                        DropdownMenuItem(
-                            text = { Text("19x19") },
-                            onClick = {
-                                settingsViewModel.setBoardsize(19)
-                                boardsizeMenuIsExpanded = false
-                            }
-                        )
-                    }
+                    DropdownMenuItem(
+                        text = { Text("19x19") },
+                        onClick = {
+                            settingsViewModel.setBoardsize(19)
+                            boardsizeMenuIsExpanded = false
+                        }
+                    )
                 }
             }
         }
