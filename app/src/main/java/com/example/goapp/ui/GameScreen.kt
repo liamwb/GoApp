@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,8 +34,13 @@ fun GameScreen(
     uiState: GoUiState,
     inputMove: (Int, Int, Piece) -> Unit,
     onUndoButtonPressed: () -> Unit,
+    showGameOverDialog: Boolean,
+    onDismissDialogRequest: () -> Unit,
+    onPlayAgain: () -> Unit,
+    onReturnToMenu: () -> Unit,
+    onPassButtonPressed: () -> Unit,
+    dialogBodyTextGenerator: () -> String,
     modifier: Modifier = Modifier,
-    onPassButtonPressed: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -48,15 +55,24 @@ fun GameScreen(
                 inputMove = inputMove,
                 onUndoButtonPressed = onUndoButtonPressed,
                 modifier = modifier,
-                onPassButtonPressed = onPassButtonPressed
+                onPassButtonPressed = onPassButtonPressed,
             )
         } else {
             PortraitLayout(
                 uiState = uiState,
                 inputMove = inputMove,
                 onUndoButtonPressed = onUndoButtonPressed,
+                onPassButtonPressed = onPassButtonPressed,
                 modifier = modifier,
-                onPassButtonPressed = onPassButtonPressed
+                )
+        }
+
+        if (showGameOverDialog) {
+            GameOverDialogue(
+                onDismissRequest = onDismissDialogRequest,
+                onPlayAgain = onPlayAgain,
+                onReturnToMenu = onReturnToMenu,
+                bodyTextGenerator = dialogBodyTextGenerator
             )
         }
     }
@@ -67,8 +83,8 @@ fun GameScreen(
     uiState: GoUiState,
     inputMove: (Int, Int, Piece) -> Unit,
     onUndoButtonPressed: () -> Unit,
+    onPassButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
-    onPassButtonPressed: () -> Unit
 ) {
     Row(
         modifier = modifier.fillMaxSize(),
@@ -81,7 +97,6 @@ fun GameScreen(
             orientation = ScreenOrientation.LANDSCAPE,
             onUndoButtonPressed = onUndoButtonPressed,
             onPassButtonPressed = onPassButtonPressed,
-            modifier = Modifier.weight(1f)
         )
 
         Board(
@@ -96,9 +111,9 @@ fun GameScreen(
             style = MaterialTheme.typography.headlineSmall,
             orientation = ScreenOrientation.LANDSCAPE,
             onUndoButtonPressed = onUndoButtonPressed,
-            modifier = Modifier.rotate(180f).weight(1f),
             onPassButtonPressed = onPassButtonPressed,
-
+                    modifier = Modifier
+                .rotate(180f)
         )
     }
 }
@@ -107,11 +122,9 @@ fun GameScreen(
     uiState: GoUiState,
     inputMove: (Int, Int, Piece) -> Unit,
     onUndoButtonPressed: () -> Unit,
+    onPassButtonPressed: () -> Unit,
     modifier: Modifier = Modifier,
-    onPassButtonPressed: () -> Unit
-) {
-    val width =
-
+    ) {
     Column(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.SpaceAround,
@@ -123,7 +136,7 @@ fun GameScreen(
             orientation = ScreenOrientation.PORTRAIT,
             onUndoButtonPressed = onUndoButtonPressed,
             modifier = Modifier.rotate(180f),
-            onPassButtonPressed = onPassButtonPressed
+            onPassButtonPressed = onPassButtonPressed,
         )
 
         Board(
@@ -138,7 +151,7 @@ fun GameScreen(
             style = MaterialTheme.typography.displaySmall,
             orientation = ScreenOrientation.PORTRAIT,
             onUndoButtonPressed = onUndoButtonPressed,
-            onPassButtonPressed = onPassButtonPressed
+            onPassButtonPressed = onPassButtonPressed,
         )
     }
 }
@@ -250,15 +263,69 @@ fun GameScreen(
     }
 }
 
+
+@Composable fun GameOverDialogue(
+    onDismissRequest: () -> Unit,
+    onPlayAgain: () -> Unit,
+    onReturnToMenu: () -> Unit,
+    bodyTextGenerator: () -> String
+) {
+    AlertDialog(
+        title = {
+            Text(text = "Game Over")
+        },
+        text = {
+            Text(text = bodyTextGenerator())
+        },
+        onDismissRequest = {
+            onDismissRequest()
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    onPlayAgain()
+                }
+            ) {
+                Text("Play Again")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = {
+                    onReturnToMenu()
+                }
+            ) {
+                Text("Menu")
+            }
+        }
+    )
+}
+
 @Preview
 @Composable
 fun GameScreenPreview () {
     GameScreen(
         ScreenOrientation.PORTRAIT,
-        uiState = GoUiState(), { a, b, c ->  },
-        onUndoButtonPressed = {},
-        modifier = Modifier,
-    ) { }
+        uiState = GoUiState(), { _, _, _ ->  },
+        onUndoButtonPressed = {  },
+        onPassButtonPressed = {  },
+        showGameOverDialog = false,
+        onDismissDialogRequest = { },
+        onPlayAgain = { },
+        onReturnToMenu = { },
+        dialogBodyTextGenerator = {" "}
+    )
+}
+
+@Preview
+@Composable
+fun GameOverDialoguePreview() {
+    GameOverDialogue(
+        onDismissRequest = {},
+        onPlayAgain = {},
+        onReturnToMenu = {},
+        bodyTextGenerator = { "Player 1 wins" }
+    )
 }
 
 

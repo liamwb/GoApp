@@ -66,10 +66,13 @@ fun GoApp(
                         row, col, piece -> goViewModel.checkLegalAndInputMove(row, col, piece)
                 },
                 onUndoButtonPressed = { goViewModel.undoMove() },
-                onPassButtonPressed = { goViewModel.passTurn() },
-
-                // todo: Implement current game database / continue game button
-            )
+                onPassButtonPressed = { goViewModel.passTurnAndCheckGameOver() },
+                showGameOverDialog = uiState.isGameOver,
+                onDismissDialogRequest = { TODO() },
+                onPlayAgain = { goViewModel.makeNewGame() },
+                onReturnToMenu = { navController.navigate(route = GoAppScreen.Start.name)},
+                dialogBodyTextGenerator = { goViewModel.generateGameOverText() }
+                )
         }
 
         composable(route = GoAppScreen.GameOverScreen.name) {

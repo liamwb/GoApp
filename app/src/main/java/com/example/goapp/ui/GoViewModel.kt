@@ -85,15 +85,25 @@ class GoViewModel(
      * Pass the turn to the other player. Checks if there have been two passes in a row. If so, the
      * game is over.
      */
-    fun passTurn() {
+    fun passTurnAndCheckGameOver() {
         if (checkConsecutivePasses()) {
-            Log.d("debug", "Two passes!")
+            _uiState.update { currentState ->
+                currentState.copy(
+                    isGameOver = true
+                )}
         }
-
         val newGameState = _uiState.value.gameState.passTurn()
         inputMove(newGameState)
+    }
 
-
+    fun generateGameOverText(): String {
+        val areaScore = _uiState.value.gameState.calculateAreaScore()
+        val winnerText = when {
+            areaScore.first > areaScore.second -> "Player 1 wins"
+            areaScore.first < areaScore.second -> "Player 2 wins"
+            else -> "It's a draw"
+        }
+        return "$winnerText (${areaScore.first} to ${areaScore.second})"
     }
 
     suspend fun updateCurrentGameDatabase() {
