@@ -1,6 +1,7 @@
 package com.example.goapp.ui
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
@@ -22,6 +23,7 @@ class GoViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(GoUiState())
     val uiState: StateFlow<GoUiState> = _uiState.asStateFlow()
+    private val seeEndGameState = mutableStateOf(false)
 
     fun makeNewGame(
         boardsize: Int = 9
@@ -104,6 +106,27 @@ class GoViewModel(
             else -> "It's a draw"
         }
         return "$winnerText (${areaScore.first} to ${areaScore.second})"
+    }
+
+    /**
+     * Show the game over dialog if the game is over, and the user does not want to see the end game
+     * board state.
+     *
+     * @return
+     */
+    fun showGameOverDialog(): Boolean {
+        return when {
+            !seeEndGameState.value && uiState.value.isGameOver -> true
+            !uiState.value.isGameOver -> false
+            else -> {
+                Log.e("e", "isGameOver is ${uiState.value.isGameOver} and seeEndGameState is ${seeEndGameState.value}")
+                false
+            }
+        }
+    }
+
+    fun setSeeEndGameStateTrue() {
+        seeEndGameState.value = true
     }
 
     suspend fun updateCurrentGameDatabase() {

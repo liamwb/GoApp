@@ -36,9 +36,6 @@ fun GoApp(
     val uiState by goViewModel.uiState.collectAsState()
     val boardSize by settingsViewModel.getBoardSize().collectAsState(initial = 9)
 
-
-
-
     NavHost(
         navController = navController,
         startDestination = GoAppScreen.Start.name,
@@ -67,8 +64,8 @@ fun GoApp(
                 },
                 onUndoButtonPressed = { goViewModel.undoMove() },
                 onPassButtonPressed = { goViewModel.passTurnAndCheckGameOver() },
-                showGameOverDialog = uiState.isGameOver,
-                onDismissDialogRequest = { TODO() },
+                showGameOverDialog = { goViewModel.showGameOverDialog() },
+                onDismissDialogRequest = { goViewModel.setSeeEndGameStateTrue() },
                 onPlayAgain = { goViewModel.makeNewGame() },
                 onReturnToMenu = { navController.navigate(route = GoAppScreen.Start.name)},
                 dialogBodyTextGenerator = { goViewModel.generateGameOverText() }

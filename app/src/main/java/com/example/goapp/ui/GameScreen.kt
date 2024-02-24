@@ -34,7 +34,7 @@ fun GameScreen(
     uiState: GoUiState,
     inputMove: (Int, Int, Piece) -> Unit,
     onUndoButtonPressed: () -> Unit,
-    showGameOverDialog: Boolean,
+    showGameOverDialog: () -> Boolean,
     onDismissDialogRequest: () -> Unit,
     onPlayAgain: () -> Unit,
     onReturnToMenu: () -> Unit,
@@ -67,7 +67,7 @@ fun GameScreen(
                 )
         }
 
-        if (showGameOverDialog) {
+        if (showGameOverDialog()) {
             GameOverDialogue(
                 onDismissRequest = onDismissDialogRequest,
                 onPlayAgain = onPlayAgain,
@@ -309,7 +309,7 @@ fun GameScreenPreview () {
         uiState = GoUiState(), { _, _, _ ->  },
         onUndoButtonPressed = {  },
         onPassButtonPressed = {  },
-        showGameOverDialog = false,
+        showGameOverDialog = { false },
         onDismissDialogRequest = { },
         onPlayAgain = { },
         onReturnToMenu = { },
