@@ -63,7 +63,6 @@ data class GameState (
                         return IllegalMove.KO
                 }
 
-                // todo
                 return IllegalMove.NONE
         }
 
@@ -106,7 +105,7 @@ data class GameState (
          * @param piece Piece
          * @return [GameState]
          */
-        fun inputMove(
+        private fun inputMove(
                 row: Int,
                 col: Int,
                 piece: Piece
@@ -150,11 +149,15 @@ data class GameState (
                                 val libertyInfo = newGameState.hasLiberties(adjacentLocation)
                                 if (libertyInfo?.first == false) { // if the adjacent piece has no liberties
 
-        // first, if there is only one piece to capture then we need to consider Ko.
-        // the ko rule can be stated: One may not capture just one stone if that stone was
-        // played on the previous move and that move also captured just one stone. So, we check if
-        // the number of pieces captured was exactly 1. If it is, then that location gains Ko = true
-        // and may not be played at on the next turn.
+        /**
+        first, if there is only one piece to capture then we need to consider Ko.
+        the ko rule can be stated: One may not capture just one stone if that stone was
+        played on the previous move and that move also captured just one stone. So, we check if
+        the number of pieces captured was exactly 1. If it is, then that location gains Ko = true
+        and may not be played at on the next turn. Since newGameState is not a copy of the previous
+        gameState, but rather a new object, we do not have to remove the previous Ko location.
+         **/
+
 
                                         // if visited has one element
                                         if (libertyInfo.second.size == 1

@@ -167,8 +167,8 @@ fun Piece(
     ) {
 
     val color = when (piece) {
-        PLAYER1 -> Color.White
-        PLAYER2 -> Color.Black
+        PLAYER1 -> Color.Black
+        PLAYER2 -> Color.White
         EMPTY -> Color.Transparent
     }
 

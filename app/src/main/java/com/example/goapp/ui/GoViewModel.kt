@@ -195,6 +195,10 @@ class GoViewModel(
         Log.d("area", areaScore.toString())
     }
 
+    fun getAreaScore(): Pair<Int, Int> {
+        return uiState.value.gameState.calculateAreaScore()
+    }
+
     /**
      * Checks if the last two board states are the same. If so, then there have been two consecutive
      * passes.
