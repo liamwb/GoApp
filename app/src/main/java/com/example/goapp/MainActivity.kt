@@ -1,6 +1,10 @@
 package com.example.goapp
 
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowInsets
+import android.view.WindowInsetsController
+import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -28,9 +32,6 @@ class MainActivity : ComponentActivity() {
 
         val settingsRepository = (application as MyApp).settingsRepository
         val currentGameRepository = (application as MyApp).currentGameRepository
-
-        // draw the content "edge-to-edge" -- no navigation bar or status bar
-        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         lifecycleScope.launch {
             setContent {
@@ -69,6 +70,27 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                 }
+            }
+
+            hideSystemUI()
+        }
+    }
+
+    private fun hideSystemUI() {
+        //Hides the ugly action bar at the top
+        actionBar?.hide()
+
+        //Hide the status bars
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        } else {
+            window.insetsController?.apply {
+                hide(WindowInsets.Type.statusBars())
+                hide(WindowInsets.Type.navigationBars())
+                systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             }
         }
     }
