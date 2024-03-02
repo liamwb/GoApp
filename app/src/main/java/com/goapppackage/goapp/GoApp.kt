@@ -70,7 +70,6 @@ fun GoApp(
                 onDismissDialogRequest = { goViewModel.setSeeEndGameStateTrue() },
                 onPlayAgain = { goViewModel.makeNewGame() },
                 onReturnToMenu = { navController.navigate(route = GoAppScreen.Start.name)},
-                navigateBackAndSaveGame = { goViewModel.navigateBackAndSaveCurrentGame(navController) },
                 dialogBodyTextGenerator = { goViewModel.generateGameOverText() }
                 )
         }

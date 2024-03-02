@@ -78,7 +78,7 @@ class GoMethodTests {
 
         val (_, komi, winner) = setUpAndInputGame(exampleGameFilepaths[0])
 
-        val score = goViewModel.getAreaScore()
+        val score = goViewModel.calculateAreaScore()
         val scoreWithKomi = Pair(score.first, score.second + komi)
 
         val winnerFromViewmodel = when{
@@ -110,7 +110,7 @@ class GoMethodTests {
 
         val (_, komi, winner) = setUpAndInputGame(exampleGameFilepaths[1])
 
-        val score = goViewModel.getAreaScore()
+        val score = goViewModel.calculateAreaScore()
         val scoreWithKomi = Pair(score.first, score.second + komi)
 
         val winnerFromViewmodel = when {
@@ -140,7 +140,7 @@ class GoMethodTests {
 
         val (_, komi, winner) = setUpAndInputGame(exampleGameFilepaths[2])
 
-        val score = goViewModel.getAreaScore()
+        val score = goViewModel.calculateAreaScore()
         val scoreWithKomi = Pair(score.first, score.second + komi)
 
         val winnerFromViewmodel = when {
@@ -171,7 +171,7 @@ class GoMethodTests {
 
         val (_, komi, winner) = setUpAndInputGame(exampleGameFilepaths[3])
 
-        val score = goViewModel.getAreaScore()
+        val score = goViewModel.calculateAreaScore()
         val scoreWithKomi = Pair(score.first, score.second + komi)
 
         val winnerFromViewmodel = when {
@@ -202,7 +202,7 @@ class GoMethodTests {
 
         val (_, komi, winner) = setUpAndInputGame(exampleGameFilepaths[4])
 
-        val score = goViewModel.getAreaScore()
+        val score = goViewModel.calculateAreaScore()
         val scoreWithKomi = Pair(score.first, score.second + komi)
 
         val winnerFromViewmodel = when {

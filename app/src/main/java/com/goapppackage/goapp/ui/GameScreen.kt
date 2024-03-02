@@ -41,12 +41,11 @@ fun GameScreen(
     onReturnToMenu: () -> Unit,
     onPassButtonPressed: () -> Unit,
     dialogBodyTextGenerator: () -> String,
-    navigateBackAndSaveGame: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    BackHandler {
-        navigateBackAndSaveGame()
-    }
+//    BackHandler {
+//        navigateBackAndSaveGame()
+//    }
 
     Box(
         modifier = modifier
@@ -320,7 +319,6 @@ fun GameScreenPreview () {
         onDismissDialogRequest = { },
         onPlayAgain = { },
         onReturnToMenu = { },
-        navigateBackAndSaveGame = { },
         dialogBodyTextGenerator = {" "}
     )
 }

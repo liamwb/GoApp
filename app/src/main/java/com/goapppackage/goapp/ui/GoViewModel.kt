@@ -1,15 +1,12 @@
 package com.goapppackage.goapp.ui
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import androidx.navigation.NavHostController
 import com.goapppackage.goapp.data.GameState
 import com.goapppackage.goapp.data.IllegalMove
 import com.goapppackage.goapp.data.Piece
@@ -47,11 +44,12 @@ class GoViewModel(
             // if the gameStateStack is empty, then this will throw a NullPointerException. Therefore,
             // this function is only available to the user when [[currentGameExists]] is true.
             val gameStateStack = currentGameRepository.getGameStateStack()
+            val currentGameState = gameStateStack.removeLast()
 
-            val boardSize = gameStateStack.last().boardSize
+            val boardSize = currentGameState.boardSize
             val goUiState = GoUiState(
                 boardSize = boardSize,
-                gameState = gameStateStack.last(),
+                gameState = currentGameState,
                 gameStateStack = gameStateStack
             )
             _uiState.update {
@@ -156,7 +154,11 @@ class GoViewModel(
 
                 // update currentGame database
                 viewModelScope.launch {
-                    currentGameRepository.setGameStateStack(_uiState.value.gameStateStack)
+                    val fullStack = ArrayDeque<GameState>()
+                    fullStack.addAll(_uiState.value.gameStateStack)
+                    fullStack.add(_uiState.value.gameState)
+
+                    currentGameRepository.setGameStateStack(fullStack)
                 }
             }
             IllegalMove.SELFCAPTURE -> {
@@ -171,34 +173,7 @@ class GoViewModel(
         }
     }
 
-    /**
-     * Navigate back and save current game.
-     *
-     * @param navController Nav controller
-     */
-    fun navigateBackAndSaveCurrentGame(
-        navController: NavHostController,
-    ) {
-        saveCurrentGame(currentGameRepository = currentGameRepository)
-
-        // navigate to previous screen
-        navController.popBackStack()
-    }
-
-    private fun saveCurrentGame(
-        currentGameRepository: CurrentGameRepository
-    ) {
-        viewModelScope.launch {
-            currentGameRepository.setGameStateStack(_uiState.value.gameStateStack)
-        }
-    }
-
-    fun calculateAreaScore() {
-        val areaScore = uiState.value.gameState.calculateAreaScore()
-        Log.d("area", areaScore.toString())
-    }
-
-    fun getAreaScore(): Pair<Int, Int> {
+    fun calculateAreaScore(): Pair<Int, Int> {
         return uiState.value.gameState.calculateAreaScore()
     }
 
