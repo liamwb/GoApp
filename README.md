@@ -8,3 +8,5 @@ This is a simple over-the-board Go app for Android using Jetpack Compose.
 
 ![Screenshot_1708906821](https://github.com/liamwb/GoApp/assets/21251569/4cbc6bca-0127-48cb-b748-852b6d554bb8)
 
+## Privacy Policy
+This app does not collect any data of any sort, and so does not distribute any information of any kind to anyone.
