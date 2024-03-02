@@ -58,19 +58,6 @@ class GoViewModel(
         }
     }
 
-
-    fun getActivePlayer(): Piece {
-        return uiState.value.gameState.activePlayer
-    }
-
-    private fun checkMoveIsLegal(
-        row: Int,
-        col: Int,
-        piece: Piece
-    ): IllegalMove {
-        return uiState.value.gameState.checkMoveIsLegalPreliminary(row, col, piece)
-    }
-
     private fun inputMove(newGameState: GameState) {
         val oldGameState = uiState.value.gameState
 
@@ -126,10 +113,6 @@ class GoViewModel(
 
     fun setSeeEndGameStateTrue() {
         seeEndGameState.value = true
-    }
-
-    suspend fun updateCurrentGameDatabase() {
-        currentGameRepository.setGameStateStack(_uiState.value.gameStateStack)
     }
 
     fun undoMove() {

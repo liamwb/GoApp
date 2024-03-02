@@ -23,4 +23,4 @@ data class GoUiState (
     @Serializable(with = ArrayDequeSerializer::class)
     val gameStateStack: ArrayDeque<GameState> = ArrayDeque(),
     val isGameOver: Boolean = false
-        )
+)
