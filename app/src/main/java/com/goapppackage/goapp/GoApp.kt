@@ -25,6 +25,8 @@ enum class GoAppScreen {
     Settings
 }
 
+// TODO implement version names and numbers using Kotlin
+
 @Composable
 fun GoApp(
     orientation: ScreenOrientation,

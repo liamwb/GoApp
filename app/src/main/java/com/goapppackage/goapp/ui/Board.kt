@@ -183,7 +183,7 @@ fun Piece(
     ) {
         drawCircle(
             color = color,
-            radius = this.size.maxDimension * pieceSize // todo does this work as expected?
+            radius = this.size.maxDimension * pieceSize
         )
     }
 }
